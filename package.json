@@ -1,0 +1,29 @@
+{
+  "name": "portfolio-jaanu-main",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shekar9801/portfolio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shekar9801/portfolio/issues"
+  },
+  "homepage": "https://github.com/shekar9801/portfolio#readme",
+  "description": "",
+  "dependencies": {
+    "particles.js": "^2.0.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "parcel": "^2.15.4"
+  }
+}
