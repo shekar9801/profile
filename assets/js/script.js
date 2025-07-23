@@ -1,4 +1,3 @@
-// Embedded skills data
 const skillsData = [
     {
         name: "ReactJS",
@@ -74,13 +73,13 @@ const skillsData = [
     }
 ];
 
-// Fallback projects data in case projects.json is unavailable
+// Fallback projects data
 const fallbackProjects = [
     {
         name: "Sample Project",
         desc: "A sample project for demonstration purposes.",
         category: "web",
-        image: "sample",
+        image: "", // Use default.png
         links: {
             view: "https://example.com",
             code: "https://github.com/example"
@@ -93,20 +92,23 @@ async function fetchData(type = "skills") {
         if (type === "skills") {
             return Promise.resolve(skillsData);
         } else {
-            const response = await fetch("./projects.json"); // Ensure correct path
+            console.log("Attempting to fetch projects.json...");
+            const response = await fetch("./projects.json");
+            console.log("Response status:", response.status, "URL:", response.url);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const data = await response.json();
+            console.log("Projects data:", data);
             return data;
         }
     } catch (error) {
         console.error(`Failed to fetch ${type}:`, error);
         if (type === "projects") {
             console.warn("Using fallback projects data");
-            return fallbackProjects; // Return fallback data
+            return fallbackProjects;
         }
-        throw error; // Rethrow for skills to handle in catch block
+        throw error;
     }
 }
 
@@ -116,7 +118,16 @@ $(document).ready(function () {
         $('.navbar').toggleClass('nav-toggle');
     });
 
-    $(window).on('scroll load', function () {
+    // Debounce scroll and load events
+    function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+
+    $(window).on('scroll load', debounce(function () {
         $('#menu').removeClass('fa-times');
         $('.navbar').removeClass('nav-toggle');
 
@@ -126,7 +137,6 @@ $(document).ready(function () {
             document.querySelector('#scroll-top').classList.remove('active');
         }
 
-        // Scroll spy
         $('section').each(function () {
             let height = $(this).height();
             let offset = $(this).offset().top - 200;
@@ -138,7 +148,7 @@ $(document).ready(function () {
                 $('.navbar').find(`[href="#${id}"]`).addClass('active');
             }
         });
-    });
+    }, 100));
 
     // Smooth scrolling
     $('a[href*="#"]').on('click', function (e) {
@@ -150,7 +160,7 @@ $(document).ready(function () {
 
     // EmailJS contact form submission
     $("#contact-form").submit(function (event) {
-        event.preventDefault(); // Moved preventDefault to start
+        event.preventDefault();
         emailjs.init("Q9oJ8KinwIctX2yBw");
 
         emailjs.sendForm('service_m5sjxuk', 'template_7hlpt8h', '#contact-form')
@@ -186,6 +196,10 @@ var typed = new Typed(".typing-text", {
 
 function showSkills(skills) {
     let skillsContainer = document.getElementById("skillsContainer");
+    if (!skillsContainer) {
+        console.error("skillsContainer element not found");
+        return;
+    }
     let skillHTML = "";
     skills.forEach(skill => {
         skillHTML += `
@@ -201,8 +215,12 @@ function showSkills(skills) {
 
 function showProjects(projects) {
     const projectsContainer = document.querySelector("#work .box-container");
+    if (!projectsContainer) {
+        console.error("projectsContainer element not found");
+        return;
+    }
     const fallbackImage = "https://placehold.co/300x200";
-    const defaultImage = "./assets/images/projects/default.png"; // Ensure correct path
+    const defaultImage = "./assets/images/projects/default.png";
 
     let projectHTML = "";
     projects
@@ -264,16 +282,16 @@ fetchData("projects").then(data => {
 }).catch(error => {
     console.error("Failed to load projects:", error);
     alert("Failed to load projects. Displaying sample project.");
-    showProjects(fallbackProjects); // Show fallback projects
+    showProjects(fallbackProjects);
 });
 
 // Disable developer mode
 document.onkeydown = function (e) {
-    if (e.keyCode == 123 || 
-        (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) ||
-        (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) ||
-        (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) ||
-        (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0))) {
+    if (e.keyCode === 123 || 
+        (e.ctrlKey && e.shiftKey && e.keyCode === 'I'.charCodeAt(0)) ||
+        (e.ctrlKey && e.shiftKey && e.keyCode === 'C'.charCodeAt(0)) ||
+        (e.ctrlKey && e.shiftKey && e.keyCode === 'J'.charCodeAt(0)) ||
+        (e.ctrlKey && e.keyCode === 'U'.charCodeAt(0))) {
         return false;
     }
 };
